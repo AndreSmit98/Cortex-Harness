@@ -35,7 +35,7 @@ function Message(props: TMessageProps) {
 
   return (
     <MessageContainer handleScroll={handleScroll}>
-      <div className="m-auto justify-center p-4 py-2 md:gap-6">
+      <div className="cortex-message-row m-auto justify-center p-4 py-2 md:gap-6">
         <MessageRender {...props} isSubmitting={effectiveIsSubmitting} chatContext={chatContext} />
       </div>
     </MessageContainer>

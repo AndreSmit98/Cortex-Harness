@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, memo } from 'react';
 import { useAtomValue } from 'jotai';
 import { useRecoilValue } from 'recoil';
+import { EModelEndpoint } from 'librechat-data-provider';
 import type { TMessage } from 'librechat-data-provider';
 import type { TMessageProps, TMessageIcon, TMessageChatContext } from '~/common';
 import {
@@ -109,23 +110,25 @@ const MessageRender = memo(function MessageRender({
     [hasNoChildren, msg?.depth, latestMessageDepth],
   );
   const isLatestMessage = msg?.messageId === latestMessageId;
+  const endpoint = msg?.endpoint ?? conversation?.endpoint;
+  const displayMessageLabel =
+    msg?.isCreatedByUser === false && endpoint === EModelEndpoint.openAI ? 'Cortex' : messageLabel;
 
   const iconData: TMessageIcon = useMemo(
     () => ({
-      endpoint: msg?.endpoint ?? conversation?.endpoint,
+      endpoint,
       model: msg?.model ?? conversation?.model,
       iconURL: msg?.iconURL,
-      modelLabel: messageLabel,
+      modelLabel: displayMessageLabel,
       isCreatedByUser: msg?.isCreatedByUser,
     }),
     [
-      messageLabel,
-      conversation?.endpoint,
+      displayMessageLabel,
       conversation?.model,
       msg?.model,
       msg?.iconURL,
-      msg?.endpoint,
       msg?.isCreatedByUser,
+      endpoint,
     ],
   );
 
@@ -174,6 +177,8 @@ const MessageRender = memo(function MessageRender({
         baseClasses.chat,
         conditionalClasses.focus,
         'message-render',
+        'cortex-message-turn',
+        msg.isCreatedByUser ? 'cortex-user-turn' : 'cortex-agent-turn',
       )}
     >
       {!hasParallelContent && (
@@ -194,7 +199,7 @@ const MessageRender = memo(function MessageRender({
         {!hasParallelContent && (
           <h2 className={cn('select-none font-semibold', fontSize)}>
             <span className="sr-only">{getHeaderPrefixForScreenReader(msg, localize)}</span>
-            {messageLabel}
+            {displayMessageLabel}
             <MessageTimestamp value={msg.createdAt ?? msg.clientTimestamp} />
           </h2>
         )}

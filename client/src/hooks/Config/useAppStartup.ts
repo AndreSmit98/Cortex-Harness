@@ -49,10 +49,9 @@ export default function useAppStartup({
 
   /** Set the app title */
   useEffect(() => {
-    const appTitle = startupConfig?.appTitle ?? '';
-    if (!appTitle) {
-      return;
-    }
+    const configuredTitle = startupConfig?.appTitle?.trim();
+    const appTitle =
+      !configuredTitle || configuredTitle === 'LibreChat' ? 'Cortex' : configuredTitle;
     document.title = appTitle;
     localStorage.setItem(LocalStorageKeys.APP_TITLE, appTitle);
   }, [startupConfig]);

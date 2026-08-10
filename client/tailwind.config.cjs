@@ -11,7 +11,17 @@ module.exports = {
   darkMode: ['class'],
   theme: {
     fontFamily: {
-      sans: ['Inter', 'sans-serif'],
+      sans: [
+        'Satoshi',
+        'Avenir Next',
+        'Avenir',
+        'ui-sans-serif',
+        'system-ui',
+        '-apple-system',
+        'BlinkMacSystemFont',
+        'Segoe UI',
+        'sans-serif',
+      ],
       mono: ['Roboto Mono', 'monospace'],
     },
     // fontFamily: {

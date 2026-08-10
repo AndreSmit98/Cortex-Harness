@@ -9,6 +9,7 @@ import useUnifiedSidebarLinks from '~/hooks/Nav/useUnifiedSidebarLinks';
 import { useChatHelpers, useLocalize } from '~/hooks';
 import SidePanelNav from '~/components/SidePanel/Nav';
 import ExpandedPanel from './ExpandedPanel';
+import FloatingSidebarLines from './FloatingSidebarLines';
 import Sidebar from './Sidebar';
 import { cn } from '~/utils';
 import store from '~/store';
@@ -137,7 +138,7 @@ function UnifiedSidebar() {
       <>
         <div
           className={cn(
-            'fixed left-0 top-0 z-[110] flex h-full bg-surface-primary-alt',
+            'cortex-harness-sidebar fixed left-0 top-0 z-[110] flex h-full bg-surface-primary-alt',
             expanded ? 'translate-x-0' : '-translate-x-full',
           )}
           style={{
@@ -146,14 +147,17 @@ function UnifiedSidebar() {
           }}
           inert={!expanded ? '' : undefined}
         >
-          <SidebarChatProvider>
-            <ActivePanelProvider>
-              <ExpandedPanel links={links} onCollapse={handleCollapse} />
-              <nav className="min-h-0 flex-1 overflow-hidden bg-surface-primary-alt">
-                <SidePanelNav links={links} />
-              </nav>
-            </ActivePanelProvider>
-          </SidebarChatProvider>
+          <FloatingSidebarLines />
+          <div className="cortex-sidebar-content relative z-[1] flex h-full w-full overflow-hidden">
+            <SidebarChatProvider>
+              <ActivePanelProvider>
+                <ExpandedPanel links={links} onCollapse={handleCollapse} />
+                <nav className="min-h-0 flex-1 overflow-hidden bg-transparent">
+                  <SidePanelNav links={links} />
+                </nav>
+              </ActivePanelProvider>
+            </SidebarChatProvider>
+          </div>
         </div>
         <div
           className={cn(
@@ -178,7 +182,7 @@ function UnifiedSidebar() {
     <SidebarChatProvider>
       <ActivePanelProvider>
         <aside
-          className="relative flex h-full flex-shrink-0 overflow-hidden"
+          className="cortex-harness-sidebar relative flex h-full flex-shrink-0 overflow-hidden"
           style={{
             width: expanded ? sidebarWidth : COLLAPSED_WIDTH,
             minWidth: expanded ? EXPANDED_MIN : COLLAPSED_WIDTH,
@@ -189,6 +193,7 @@ function UnifiedSidebar() {
           }}
           aria-label={localize('com_nav_control_panel')}
         >
+          <FloatingSidebarLines />
           <Sidebar
             links={links}
             expanded={expanded}

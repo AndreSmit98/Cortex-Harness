@@ -114,7 +114,7 @@ function MessagesViewContent({
       <div className="relative flex-1 overflow-hidden overflow-y-auto">
         <div className="relative h-full">
           <div
-            className="scrollbar-gutter-stable"
+            className="cortex-message-canvas scrollbar-gutter-stable"
             onScroll={debouncedHandleScroll}
             ref={scrollableRef}
             style={{
@@ -125,7 +125,7 @@ function MessagesViewContent({
           >
             <div
               ref={contentRef}
-              className="flex flex-col pb-9 pt-14 dark:bg-transparent"
+              className="cortex-message-stream flex flex-col pb-9 pt-14 dark:bg-transparent"
               style={
                 steerOverlayHeight > 0
                   ? { paddingBottom: `calc(2.25rem + ${steerOverlayHeight}px)` }

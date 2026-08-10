@@ -44,7 +44,9 @@ export default function StartupLayout({ isAuthenticated }: { isAuthenticated?: b
   }, [isAuthenticated, navigate, data]);
 
   useEffect(() => {
-    document.title = startupConfig?.appTitle || 'LibreChat';
+    const configuredTitle = startupConfig?.appTitle?.trim();
+    document.title =
+      !configuredTitle || configuredTitle === 'LibreChat' ? 'Cortex' : configuredTitle;
   }, [startupConfig?.appTitle]);
 
   useEffect(() => {

@@ -3,15 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <base href="/" />
-    <meta name="theme-color" content="#171717" />
+    <meta name="theme-color" content="#cfd2cf" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta
-      name="description"
-      content="LibreChat - An open source chat application with support for multiple AI models"
-    />
-    <title>LibreChat</title>
+    <meta name="description" content="Cortex - RSAWEB's AI workspace" />
+    <title>Cortex</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon-180x180.png" />
@@ -33,14 +30,14 @@
       let backgroundColor;
 
       if (theme === 'dark') {
-        backgroundColor = '#0d0d0d';
+        backgroundColor = '#131614';
       } else if (theme === 'light') {
-        backgroundColor = '#ffffff';
+        backgroundColor = '#cfd2cf';
       } else if (theme === 'system') {
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        backgroundColor = prefersDarkScheme ? '#0d0d0d' : '#ffffff';
+        backgroundColor = prefersDarkScheme ? '#131614' : '#cfd2cf';
       } else {
-        backgroundColor = '#ffffff';
+        backgroundColor = '#cfd2cf';
       }
 
       loadingContainerStyle.innerHTML = `

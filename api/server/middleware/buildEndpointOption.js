@@ -1,6 +1,7 @@
 const {
   handleError,
   applyModelSpecPreset,
+  applyAssistantIdentity,
   findModelSpecByName,
   isModelSpecEndpointMatch,
   resolveModelSpecPromptPrefixVariables,
@@ -128,6 +129,8 @@ async function buildEndpointOption(req, res, next) {
       req.body.clientTimestamp,
     );
   }
+
+  parsedBody = applyAssistantIdentity(parsedBody, appConfig.assistantIdentity?.systemPrompt);
 
   try {
     const builder = isAgents

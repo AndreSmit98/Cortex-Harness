@@ -20,6 +20,22 @@ const endpointsConfig: TEndpointsConfig = {
   Gemini: { type: EModelEndpoint.custom, userProvide: false, order: 9999 },
 };
 
+describe('assistantIdentity', () => {
+  it('accepts a persistent system prompt', () => {
+    const result = configSchema.safeParse({
+      version: '1.3.13',
+      assistantIdentity: {
+        systemPrompt: 'You are Cortex.',
+      },
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.assistantIdentity?.systemPrompt).toBe('You are Cortex.');
+    }
+  });
+});
+
 describe('excludedKeys', () => {
   it.each(['_id', 'user', 'conversationId', '__v'])('excludes system field "%s"', (field) => {
     expect(excludedKeys.has(field)).toBe(true);

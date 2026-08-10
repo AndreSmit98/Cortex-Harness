@@ -56,7 +56,7 @@ const localStorageAtoms = {
   // Beta features settings
   modularChat: atomWithLocalStorage('modularChat', true),
   LaTeXParsing: atomWithLocalStorage('LaTeXParsing', true),
-  centerFormOnLanding: atomWithLocalStorage('centerFormOnLanding', true),
+  centerFormOnLanding: atomWithLocalStorage('centerFormOnLanding', false),
   showFooter: atomWithLocalStorage('showFooter', true),
 
   // Commands settings

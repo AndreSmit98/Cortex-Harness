@@ -489,8 +489,8 @@ const ChatForm = memo(function ChatForm({
         return submitMessage(data);
       })}
       className={cn(
-        'mx-auto flex w-full flex-row gap-3 transition-[max-width] duration-300 sm:px-2',
-        maximizeChatSpace ? 'max-w-full' : 'md:max-w-3xl xl:max-w-4xl',
+        'cortex-composer-form mx-auto flex w-full flex-row gap-3 transition-[max-width] duration-300 sm:px-2',
+        maximizeChatSpace ? 'max-w-full' : 'md:max-w-3xl',
         centerFormOnLanding &&
           (conversationId == null || conversationId === Constants.NEW_CONVO) &&
           !isSubmitting &&
@@ -543,7 +543,7 @@ const ChatForm = memo(function ChatForm({
             <div
               onClick={handleContainerClick}
               className={cn(
-                'relative flex w-full flex-grow flex-col overflow-hidden rounded-t-3xl border pb-4 text-text-primary transition-all duration-200 sm:rounded-3xl sm:pb-0',
+                'cortex-composer-surface relative flex w-full flex-grow flex-col overflow-hidden rounded-t-3xl border pb-4 text-text-primary transition-all duration-200 sm:rounded-3xl sm:pb-0',
                 isTextAreaFocused ? 'shadow-lg' : 'shadow-md',
                 isTemporary
                   ? 'border-violet-800/60 bg-violet-950/10'
@@ -621,6 +621,7 @@ const ChatForm = memo(function ChatForm({
                       className={cn(
                         baseClasses,
                         removeFocusRings,
+                        'cortex-composer-textarea',
                         'scrollbar-hover transition-[max-height] duration-200 disabled:cursor-not-allowed',
                       )}
                     />

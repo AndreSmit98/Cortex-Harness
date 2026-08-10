@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/assets/fonts/Satoshi-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/assets/fonts/Satoshi-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/assets/fonts/Satoshi-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/assets/fonts/Satoshi-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 .message-render {
   scroll-margin-top: 4rem;
 }
@@ -91,8 +123,8 @@
 .t-icon-swap .t-icon {
   grid-area: 1 / 1;
   transition:
-    opacity   var(--icon-swap-dur) var(--icon-swap-ease),
-    filter    var(--icon-swap-dur) var(--icon-swap-ease),
+    opacity var(--icon-swap-dur) var(--icon-swap-ease),
+    filter var(--icon-swap-dur) var(--icon-swap-ease),
     transform var(--icon-swap-dur) var(--icon-swap-ease);
   will-change: opacity, filter, transform;
 }
@@ -3026,4 +3058,558 @@ html {
 
 .sharepoint-picker-bg {
   background-color: #f5f5f5;
+}
+
+/* Cortex brand system, adapted from cortex-version-2-UI-Updates. */
+html {
+  --cortex-ink: #1b1d1c;
+  --cortex-muted: #747a76;
+  --cortex-faint: #9ca19d;
+  --cortex-shell: #cfd2cf;
+  --cortex-workspace: #fafbf8;
+  --cortex-panel: #fafbf8;
+  --cortex-panel-subtle: #eef0ed;
+  --cortex-line: #d8dcd7;
+  --cortex-line-strong: #c7ccc7;
+  --cortex-red: #f1212a;
+  --cortex-red-dark: #d71922;
+  --cortex-success: #27825f;
+  --cortex-shell-shadow: 0 18px 48px #25282516;
+  --cortex-control-shadow: 6px 8px 22px #43484313, -5px -5px 16px #ffffff90;
+
+  --presentation: var(--cortex-workspace);
+  --text-primary: var(--cortex-ink);
+  --text-secondary: var(--cortex-muted);
+  --text-secondary-alt: var(--cortex-muted);
+  --text-tertiary: var(--cortex-faint);
+  --ring-primary: var(--cortex-red);
+  --header-primary: var(--cortex-panel);
+  --header-hover: var(--cortex-panel-subtle);
+  --header-button-hover: var(--cortex-panel-subtle);
+  --surface-active: #e4e7e3;
+  --surface-active-alt: var(--cortex-panel-subtle);
+  --surface-hover: #e6e9e5;
+  --surface-hover-alt: #dde1dc;
+  --surface-primary: var(--cortex-panel);
+  --surface-primary-alt: #f2f4f0;
+  --surface-primary-contrast: var(--cortex-panel-subtle);
+  --surface-secondary: #f4f6f2;
+  --surface-secondary-alt: #e7eae6;
+  --surface-tertiary: var(--cortex-panel-subtle);
+  --surface-tertiary-alt: var(--cortex-panel);
+  --surface-dialog: var(--cortex-panel);
+  --surface-submit: var(--cortex-red);
+  --surface-submit-hover: var(--cortex-red-dark);
+  --surface-chat: #ffffff;
+  --border-light: var(--cortex-line);
+  --border-medium-alt: var(--cortex-line-strong);
+  --border-medium: var(--cortex-line-strong);
+  --border-heavy: #aeb4ae;
+  --border-xheavy: #8d928e;
+
+  font-family:
+    'Satoshi',
+    'Avenir Next',
+    Avenir,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  color: var(--cortex-ink);
+  background: var(--cortex-shell);
+}
+
+html.dark {
+  --cortex-ink: #f1f3ed;
+  --cortex-muted: #b0b6ae;
+  --cortex-faint: #818980;
+  --cortex-shell: #131614;
+  --cortex-workspace: #1f2321;
+  --cortex-panel: #252927;
+  --cortex-panel-subtle: #303531;
+  --cortex-line: #3b423d;
+  --cortex-line-strong: #505950;
+  --cortex-red: #f35b63;
+  --cortex-red-dark: #ff7278;
+  --cortex-success: #76d8ae;
+  --cortex-shell-shadow: 0 18px 48px #00000052;
+  --cortex-control-shadow: 6px 8px 22px #00000038, -2px -2px 12px #ffffff08;
+
+  --presentation: var(--cortex-workspace);
+  --text-primary: var(--cortex-ink);
+  --text-secondary: var(--cortex-muted);
+  --text-secondary-alt: var(--cortex-muted);
+  --text-tertiary: var(--cortex-faint);
+  --ring-primary: var(--cortex-red);
+  --header-primary: var(--cortex-panel);
+  --header-hover: var(--cortex-panel-subtle);
+  --header-button-hover: var(--cortex-panel-subtle);
+  --surface-active: #39403b;
+  --surface-active-alt: var(--cortex-panel-subtle);
+  --surface-hover: #39403b;
+  --surface-hover-alt: #444c46;
+  --surface-primary: var(--cortex-panel);
+  --surface-primary-alt: #202522;
+  --surface-primary-contrast: #1b201d;
+  --surface-secondary: #272c29;
+  --surface-secondary-alt: var(--cortex-panel-subtle);
+  --surface-tertiary: #353b37;
+  --surface-tertiary-alt: var(--cortex-panel);
+  --surface-dialog: var(--cortex-panel);
+  --surface-submit: var(--cortex-red);
+  --surface-submit-hover: var(--cortex-red-dark);
+  --surface-chat: #1b201d;
+  --border-light: var(--cortex-line);
+  --border-medium-alt: var(--cortex-line-strong);
+  --border-medium: var(--cortex-line-strong);
+  --border-heavy: #667168;
+  --border-xheavy: #818b82;
+}
+
+body {
+  background:
+    radial-gradient(circle at 44% 0%, #ffffffb0 0, transparent 40%),
+    linear-gradient(145deg, #d9dcd8 0%, #c6c9c6 100%);
+}
+
+.dark body {
+  background:
+    radial-gradient(circle at 44% 0%, #ffffff0c 0, transparent 40%),
+    linear-gradient(145deg, #242925 0%, #131614 100%);
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.cortex-shell {
+  gap: 10px;
+  padding: 10px;
+  background: transparent;
+}
+
+.cortex-harness-sidebar,
+.cortex-workspace {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 22px;
+  background: rgba(244, 245, 242, 0.96);
+  box-shadow:
+    var(--cortex-shell-shadow),
+    inset 0 1px 0 #ffffff;
+  backdrop-filter: blur(18px);
+}
+
+.dark .cortex-harness-sidebar,
+.dark .cortex-workspace {
+  border-color: #ffffff12;
+  background: rgba(27, 31, 29, 0.96);
+  box-shadow:
+    var(--cortex-shell-shadow),
+    inset 0 1px 0 #ffffff0a;
+}
+
+.cortex-workspace {
+  min-width: 0;
+  background: rgba(250, 251, 248, 0.94);
+}
+
+.dark .cortex-workspace {
+  background: rgba(31, 35, 33, 0.96);
+}
+
+.cortex-sidebar-rail {
+  border-color: var(--cortex-line);
+  background: transparent;
+}
+
+.cortex-floating-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.42;
+  mix-blend-mode: multiply;
+}
+
+.cortex-floating-lines canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.dark .cortex-floating-lines {
+  opacity: 0.52;
+  mix-blend-mode: screen;
+}
+
+.cortex-sidebar-content {
+  isolation: isolate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cortex-floating-lines canvas {
+    display: none;
+  }
+}
+
+.cortex-new-chat-control {
+  border: 1px solid var(--cortex-line);
+  background: var(--cortex-panel);
+  box-shadow: var(--cortex-control-shadow);
+}
+
+.cortex-new-chat-control:hover {
+  border-color: var(--cortex-line-strong);
+  background: var(--cortex-panel);
+  transform: translateY(-1px);
+}
+
+.cortex-new-chat-control svg {
+  color: var(--cortex-red);
+}
+
+.cortex-nav-control[aria-pressed='true'] {
+  color: #ffffff;
+  background: var(--cortex-red);
+  box-shadow: 0 8px 18px #f1212a24;
+}
+
+.cortex-nav-control[aria-pressed='true'] svg {
+  color: inherit;
+}
+
+.cortex-harness-sidebar [data-testid='convo-item'][data-active='true'] {
+  --text-primary: var(--cortex-ink);
+  --text-secondary: var(--cortex-muted);
+  color: var(--cortex-ink);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow:
+    0 8px 22px rgba(31, 36, 33, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(18px) saturate(135%);
+}
+
+.dark .cortex-harness-sidebar [data-testid='convo-item'][data-active='true'] {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.cortex-harness-sidebar [data-testid='convo-item'][data-active='true']::before {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.cortex-harness-sidebar [data-testid='convo-item']:not([data-active='true']):hover {
+  background: rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(12px);
+}
+
+.dark .cortex-harness-sidebar [data-testid='convo-item']:not([data-active='true']):hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.cortex-header {
+  color: var(--cortex-ink);
+  border-bottom: 1px solid var(--cortex-line);
+  background: rgba(250, 251, 248, 0.88);
+  backdrop-filter: blur(18px);
+}
+
+.dark .cortex-header {
+  background: rgba(31, 35, 33, 0.88);
+}
+
+.cortex-wordmark {
+  margin-right: 0.5rem;
+  letter-spacing: 0.12em;
+  color: var(--cortex-ink);
+}
+
+.cortex-auth-wordmark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cortex-red);
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+
+.cortex-presentation {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.86), transparent 36%),
+    linear-gradient(180deg, #f7f8f5 0%, #f2f4f0 100%);
+}
+
+.dark .cortex-presentation {
+  background:
+    radial-gradient(circle at 50% 0%, #ffffff09, transparent 36%),
+    linear-gradient(180deg, #242926 0%, #1b201d 100%);
+}
+
+.cortex-message-canvas {
+  scrollbar-color: var(--cortex-line-strong) transparent;
+}
+
+.cortex-message-stream {
+  padding-top: 6.125rem;
+}
+
+.cortex-message-row {
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+}
+
+.cortex-message-turn {
+  max-width: 48rem !important;
+  gap: 1rem;
+}
+
+.cortex-message-turn > div:first-child > div {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  border: 2px solid #ffffff;
+  box-shadow: 0 5px 14px #25282520;
+}
+
+.cortex-user-turn > div:first-child > div {
+  background: var(--cortex-red);
+}
+
+.cortex-user-message-badge {
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.dark .cortex-message-turn > div:first-child > div {
+  border-color: #343a36;
+  box-shadow: 0 5px 14px #00000038;
+}
+
+.cortex-message-turn h2 {
+  color: var(--cortex-red-dark);
+}
+
+.cortex-agent-turn .message-content {
+  color: var(--cortex-ink);
+}
+
+.cortex-user-turn {
+  flex-direction: row-reverse;
+}
+
+.cortex-user-turn > div:last-child,
+.cortex-user-turn .text-message {
+  align-items: flex-end;
+}
+
+.cortex-user-turn h2 {
+  color: var(--cortex-muted);
+  text-align: right;
+}
+
+.cortex-user-turn .message-content {
+  width: auto !important;
+  max-width: min(85%, 42rem);
+  padding: 0.75rem 1rem;
+  color: #ffffff !important;
+  border-radius: 1rem 0.25rem 1rem 1rem;
+  background: linear-gradient(135deg, #ef4b53 0%, #d91f29 100%);
+  box-shadow:
+    0 9px 20px #d7192228,
+    inset 0 1px 0 #ffffff2e;
+}
+
+.cortex-user-turn .message-content :where(p, li, strong, em, code, a) {
+  color: inherit !important;
+}
+
+.dark .cortex-user-turn .message-content {
+  color: var(--cortex-ink) !important;
+  background: #343936;
+  box-shadow: 0 8px 22px #0000003d;
+}
+
+.cortex-composer-dock {
+  position: relative;
+  z-index: 5;
+  padding-top: 1rem;
+  border-top: 1px solid var(--cortex-line);
+  background: rgba(250, 251, 248, 0.94);
+  backdrop-filter: blur(18px);
+}
+
+.dark .cortex-composer-dock {
+  background: rgba(31, 35, 33, 0.94);
+}
+
+.cortex-composer-form {
+  padding-inline: 1rem;
+}
+
+.cortex-composer-surface {
+  border-color: var(--cortex-line-strong) !important;
+  border-radius: 1rem !important;
+  background: #ffffff !important;
+  box-shadow:
+    inset 0 1px 2px #2528250a,
+    0 10px 24px #2528250d !important;
+}
+
+.cortex-composer-surface:focus-within {
+  border-color: #8d928e !important;
+  box-shadow:
+    0 0 0 3px #24262418,
+    0 12px 28px #25282512 !important;
+}
+
+.dark .cortex-composer-surface {
+  background: #1b201d !important;
+  box-shadow:
+    inset 0 1px 2px #00000038,
+    0 10px 24px #00000024 !important;
+}
+
+.dark .cortex-composer-surface:focus-within {
+  border-color: #727c72 !important;
+  box-shadow:
+    0 0 0 3px #ffffff14,
+    0 12px 28px #00000032 !important;
+}
+
+.cortex-composer-textarea {
+  caret-color: var(--cortex-red);
+}
+
+.cortex-send-button {
+  color: #ffffff;
+  background: var(--cortex-red);
+  box-shadow: 0 9px 20px #f1212a20;
+}
+
+.cortex-send-button:hover:not(:disabled) {
+  background: var(--cortex-red-dark);
+  box-shadow: 0 12px 24px #f1212a2a;
+  transform: translateY(-1px);
+}
+
+.cortex-send-button svg {
+  color: #ffffff;
+}
+
+.cortex-landing > div {
+  padding: 1.5rem 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 1.5rem;
+  background: rgba(250, 251, 248, 0.64);
+  box-shadow:
+    0 18px 48px #2528250d,
+    inset 0 1px 0 #ffffff;
+  backdrop-filter: blur(14px);
+}
+
+.cortex-landing--docked {
+  width: 100%;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 6.5rem 2rem 2rem;
+}
+
+.cortex-landing--docked > div {
+  width: min(100%, 48rem);
+  align-items: flex-start;
+  margin-inline: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.cortex-landing--docked > div > div:first-child {
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.cortex-landing--docked > div > div:first-child > :last-child {
+  font-size: 0.95rem;
+  font-weight: 400;
+  text-align: left;
+}
+
+.dark .cortex-landing > div {
+  border-color: #ffffff12;
+  background: rgba(37, 41, 39, 0.62);
+  box-shadow:
+    0 18px 48px #00000024,
+    inset 0 1px 0 #ffffff0a;
+}
+
+.cortex-workspace :focus-visible {
+  outline-color: var(--cortex-red);
+}
+
+@media (max-width: 768px) {
+  .cortex-shell {
+    gap: 0;
+    padding: 0;
+  }
+
+  .cortex-workspace {
+    border: 0;
+    border-radius: 0;
+  }
+
+  .cortex-harness-sidebar {
+    border-radius: 0 22px 22px 0;
+    box-shadow: 18px 0 48px #25282524;
+  }
+
+  .cortex-message-stream {
+    padding-top: 5.375rem;
+  }
+
+  .cortex-user-turn .message-content {
+    max-width: 92%;
+  }
+
+  .cortex-composer-form {
+    padding-inline: 0;
+  }
+
+  .cortex-landing > div {
+    margin-inline: 1rem;
+    padding: 1.25rem;
+  }
+
+  .cortex-landing--docked {
+    padding: 5.5rem 1rem 1rem;
+  }
+
+  .cortex-landing--docked > div {
+    margin-inline: 0;
+    padding: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cortex-new-chat-control,
+  .cortex-send-button {
+    transition: none !important;
+  }
 }

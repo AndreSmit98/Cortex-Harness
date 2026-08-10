@@ -3,7 +3,6 @@ import { Feather } from 'lucide-react';
 import { EModelEndpoint, isAssistantsEndpoint, alternateName } from 'librechat-data-provider';
 import {
   Plugin,
-  GPTIcon,
   PaLMIcon,
   CodeyIcon,
   GeminiIcon,
@@ -14,6 +13,7 @@ import {
   CustomMinimalIcon,
 } from '@librechat/client';
 import UnknownIcon from '~/hooks/Endpoint/UnknownIcon';
+import CortexIcon from './CortexIcon';
 import { IconProps } from '~/common';
 import { cn } from '~/utils';
 
@@ -22,14 +22,6 @@ type EndpointIcon = {
   bg?: string;
   name?: string | null;
 };
-
-function getOpenAIColor(_model: string | null | undefined) {
-  const model = _model?.toLowerCase() ?? '';
-  if (model && (/\b(o\d)\b/i.test(model) || /\bgpt-[5-9](?:\.\d+)?\b/i.test(model))) {
-    return '#000000';
-  }
-  return model.includes('gpt-4') ? '#AB68FF' : '#19C37D';
-}
 
 function getGoogleIcon(model: string | null | undefined, size: number) {
   if (model?.toLowerCase().includes('code') === true) {
@@ -129,9 +121,8 @@ const MessageEndpointIcon: React.FC<IconProps> = (props) => {
       name: 'ChatGPT',
     },
     [EModelEndpoint.openAI]: {
-      icon: <GPTIcon size={size * 0.5555555555555556} />,
-      bg: getOpenAIColor(model),
-      name: 'ChatGPT',
+      icon: <CortexIcon size={size} />,
+      name: 'Cortex',
     },
     [EModelEndpoint.google]: {
       icon: getGoogleIcon(model, size),
@@ -151,7 +142,7 @@ const MessageEndpointIcon: React.FC<IconProps> = (props) => {
       icon: <CustomMinimalIcon size={size * 0.7} />,
       name: 'Custom',
     },
-    null: { icon: <GPTIcon size={size * 0.7} />, bg: 'grey', name: 'N/A' },
+    null: { icon: <CortexIcon size={size} />, name: 'Cortex' },
     default: {
       icon: (
         <div className="h-6 w-6">
@@ -191,7 +182,8 @@ const MessageEndpointIcon: React.FC<IconProps> = (props) => {
         height: size,
       }}
       className={cn(
-        'relative flex h-9 w-9 items-center justify-center rounded-sm p-1 text-white',
+        'relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-sm text-white',
+        endpoint === EModelEndpoint.openAI || endpoint == null ? 'p-0' : 'p-1',
         props.className ?? '',
       )}
     >

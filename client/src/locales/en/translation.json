@@ -1490,6 +1490,8 @@
   "com_ui_new": "New",
   "com_ui_new_action": "New action",
   "com_ui_new_chat": "New chat",
+  "com_ui_cortex_wordmark": "CORTEX",
+  "com_ui_cortex_disclaimer": "Cortex can make mistakes. Check important information.",
   "com_ui_new_chat_in_project": "New chat in {{name}}",
   "com_ui_new_conversation_title": "New Conversation Title",
   "com_ui_new_project": "New project",

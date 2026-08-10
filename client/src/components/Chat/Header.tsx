@@ -9,7 +9,7 @@ import { OpenSidebar, PresetsMenu } from './Menus';
 import BookmarkMenu from './Menus/BookmarkMenu';
 import { TemporaryChat } from './TemporaryChat';
 import AddMultiConvo from './AddMultiConvo';
-import { useHasAccess } from '~/hooks';
+import { useHasAccess, useLocalize } from '~/hooks';
 import { cn } from '~/utils';
 import store from '~/store';
 
@@ -18,6 +18,7 @@ const defaultInterface = getConfigDefaults().interface;
 function Header() {
   const { data: startupConfig } = useGetStartupConfig();
   const navVisible = useRecoilValue(store.sidebarExpanded);
+  const localize = useLocalize();
 
   const interfaceConfig = useMemo(
     () => startupConfig?.interface ?? defaultInterface,
@@ -42,7 +43,7 @@ function Header() {
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
 
   return (
-    <div className="via-presentation/70 md:from-presentation/80 md:via-presentation/50 2xl:from-presentation/0 absolute top-0 z-10 flex h-[52px] w-full items-center justify-between bg-gradient-to-b from-presentation to-transparent p-2 font-semibold text-text-primary 2xl:via-transparent">
+    <header className="cortex-header absolute top-0 z-10 flex h-[78px] w-full items-center justify-between px-3 font-semibold text-text-primary md:px-5">
       <div className="hide-scrollbar flex w-full items-center justify-between gap-2 overflow-x-auto">
         <div className="mx-1 flex items-center">
           {isSmallScreen ? <OpenSidebar /> : null}
@@ -53,6 +54,9 @@ function Header() {
                 !isSmallScreen ? 'transition-all duration-200 ease-in-out' : '',
               )}
             >
+              <span className="cortex-wordmark hidden text-base font-bold lg:inline">
+                {localize('com_ui_cortex_wordmark')}
+              </span>
               <ModelSelector startupConfig={startupConfig} />
               {interfaceConfig.presets === true && interfaceConfig.modelSelect && <PresetsMenu />}
               {hasAccessToBookmarks === true && <BookmarkMenu />}
@@ -80,7 +84,7 @@ function Header() {
       </div>
       {/* Empty div for spacing */}
       <div />
-    </div>
+    </header>
   );
 }
 

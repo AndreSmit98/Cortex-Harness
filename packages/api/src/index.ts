@@ -1,4 +1,5 @@
 export * from './app';
+export * from './assistantIdentity';
 /* Artifacts */
 export * from './artifacts';
 /* Admin */

@@ -118,6 +118,13 @@ function ChatView({ index = 0, project }: { index?: number; project?: TChatProje
   const pageHeading =
     isLandingPage || !conversationTitle ? localize('com_ui_new_chat') : conversationTitle;
 
+  let contentLayoutClass = 'h-full overflow-y-auto';
+  if (isLandingPage) {
+    contentLayoutClass = centerFormOnLanding
+      ? 'flex-1 items-center justify-end sm:justify-center'
+      : 'flex-1 items-stretch justify-start';
+  }
+
   return (
     <ChatFormProvider {...methods}>
       <ChatContext.Provider value={chatHelpers}>
@@ -127,18 +134,11 @@ function ChatView({ index = 0, project }: { index?: number; project?: TChatProje
               <h1 className="sr-only">{pageHeading}</h1>
               <Header />
               <>
-                <div
-                  className={cn(
-                    'flex flex-col',
-                    isLandingPage
-                      ? 'flex-1 items-center justify-end sm:justify-center'
-                      : 'h-full overflow-y-auto',
-                  )}
-                >
+                <div className={cn('flex flex-col', contentLayoutClass)}>
                   {content}
                   <div
                     className={cn(
-                      'w-full',
+                      'cortex-composer-dock w-full',
                       isLandingPage && 'max-w-3xl transition-all duration-200 xl:max-w-4xl',
                     )}
                   >

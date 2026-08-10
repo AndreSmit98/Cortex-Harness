@@ -60,12 +60,8 @@ function AuthLayout({
     <div className="relative flex min-h-screen flex-col bg-white dark:bg-gray-900">
       <Banner />
       <BlinkAnimation active={isFetching}>
-        <div className="mt-6 h-10 w-full bg-cover">
-          <img
-            src="assets/logo.svg"
-            className="h-full w-full object-contain"
-            alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'LibreChat' })}
-          />
+        <div className="cortex-auth-wordmark mt-6 h-10 w-full bg-cover" aria-label="Cortex">
+          {localize('com_ui_cortex_wordmark')}
         </div>
       </BlinkAnimation>
       <DisplayError />

@@ -21,7 +21,7 @@ function Sidebar({
 }) {
   return (
     <>
-      <div className="flex h-full w-full overflow-hidden">
+      <div className="cortex-sidebar-content relative z-[1] flex h-full w-full overflow-hidden">
         <ExpandedPanel
           links={links}
           expanded={expanded}
@@ -30,7 +30,7 @@ function Sidebar({
         />
         <nav
           className={cn(
-            'min-h-0 flex-1 overflow-hidden bg-surface-primary-alt',
+            'min-h-0 flex-1 overflow-hidden bg-transparent',
             expanded ? 'opacity-100' : 'pointer-events-none opacity-0',
           )}
           style={{ transition: expanded ? 'opacity 200ms ease 80ms' : 'opacity 150ms ease' }}

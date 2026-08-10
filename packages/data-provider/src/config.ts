@@ -1949,6 +1949,12 @@ export type LangfuseConfig = z.infer<typeof langfuseConfigSchema>;
 export const configSchema = z.object({
   version: z.string(),
   cache: z.boolean().default(true),
+  assistantIdentity: z
+    .object({
+      systemPrompt: z.string().trim().min(1),
+    })
+    .strict()
+    .optional(),
   ocr: ocrSchema.optional(),
   webSearch: webSearchSchema.optional(),
   langfuse: langfuseConfigSchema.optional(),

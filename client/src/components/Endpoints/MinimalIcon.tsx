@@ -5,11 +5,11 @@ import {
   BedrockIcon,
   AnthropicIcon,
   AzureMinimalIcon,
-  OpenAIMinimalIcon,
   GoogleMinimalIcon,
   CustomMinimalIcon,
 } from '@librechat/client';
 import UnknownIcon from '~/hooks/Endpoint/UnknownIcon';
+import CortexIcon from './CortexIcon';
 import { IconProps } from '~/common';
 import { cn } from '~/utils';
 
@@ -28,8 +28,8 @@ const MinimalIcon: React.FC<IconProps> = (props) => {
       name: props.chatGptLabel ?? 'ChatGPT',
     },
     [EModelEndpoint.openAI]: {
-      icon: <OpenAIMinimalIcon className={iconClassName} />,
-      name: props.chatGptLabel ?? 'ChatGPT',
+      icon: <CortexIcon className={iconClassName} size={size} />,
+      name: 'Cortex',
     },
     [EModelEndpoint.google]: { icon: <GoogleMinimalIcon />, name: props.modelLabel ?? 'Google' },
     [EModelEndpoint.anthropic]: {

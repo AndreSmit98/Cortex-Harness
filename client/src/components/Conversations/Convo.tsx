@@ -224,6 +224,7 @@ function Conversation({
           : 'hover:bg-surface-active-alt',
       )}
       role="button"
+      data-active={isActiveConvo || isPopoverActive ? 'true' : undefined}
       tabIndex={renaming ? -1 : 0}
       aria-label={localize('com_ui_conversation_label', {
         title: title || localize('com_ui_untitled'),
