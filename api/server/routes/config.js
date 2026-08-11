@@ -11,6 +11,7 @@ const {
   sanitizeModelSpecs,
   excludeHiddenModelSpecs,
   isFileSnapshotEnabled,
+  getLoginManagerPublicConfig,
 } = require('@librechat/api');
 const { EModelEndpoint, defaultSocialLogins } = require('librechat-data-provider');
 const { logger, getTenantId, SystemCapabilities } = require('@librechat/data-schemas');
@@ -53,6 +54,7 @@ function isBirthday() {
  * See client consumers under `client/src/components/Auth/` and `client/src/routes/Layouts/Startup.tsx`.
  */
 function buildPreLoginPayload() {
+  const loginManager = getLoginManagerPublicConfig();
   const isOpenIdEnabled =
     !!process.env.OPENID_CLIENT_ID &&
     (isEnabled(process.env.OPENID_USE_PKCE) || !!process.env.OPENID_CLIENT_SECRET?.trim()) &&
@@ -80,6 +82,8 @@ function buildPreLoginPayload() {
       !!process.env.APPLE_KEY_ID &&
       !!process.env.APPLE_PRIVATE_KEY_PATH,
     openidLoginEnabled: isOpenIdEnabled,
+    loginManagerLoginEnabled: loginManager.enabled,
+    loginManagerLabel: loginManager.label,
     openidLabel: process.env.OPENID_BUTTON_LABEL || 'Continue with OpenID',
     openidImageUrl: process.env.OPENID_IMAGE_URL,
     openidAutoRedirect: isEnabled(process.env.OPENID_AUTO_REDIRECT),

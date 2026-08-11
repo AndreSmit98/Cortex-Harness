@@ -30,6 +30,10 @@ export interface IUser extends Document {
   appleId?: string;
   plugins?: string[];
   openidIssuer?: string;
+  loginManagerId?: string;
+  loginManagerIssuer?: string;
+  loginManagerCompanyId?: string;
+  loginManagerGroups?: string[];
   twoFactorEnabled?: boolean;
   totpSecret?: string;
   backupCodes?: Array<{
@@ -118,6 +122,7 @@ export interface UserFilterOptions extends CursorPaginationParams {
   googleId?: string;
   facebookId?: string;
   openidId?: string;
+  loginManagerId?: string;
   samlId?: string;
   ldapId?: string;
   githubId?: string;

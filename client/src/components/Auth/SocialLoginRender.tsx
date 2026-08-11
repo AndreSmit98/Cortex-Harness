@@ -7,12 +7,9 @@ import {
   AppleIcon,
   SamlIcon,
 } from '@librechat/client';
-
-import SocialButton from './SocialButton';
-
+import type { TStartupConfig } from 'librechat-data-provider';
 import { useLocalize } from '~/hooks';
-
-import { TStartupConfig } from 'librechat-data-provider';
+import SocialButton from './SocialButton';
 
 function SocialLoginRender({
   startupConfig,
@@ -117,21 +114,33 @@ function SocialLoginRender({
     ),
   };
 
+  const hasExternalLogin =
+    startupConfig.loginManagerLoginEnabled || startupConfig.socialLoginEnabled;
+
   return (
-    startupConfig.socialLoginEnabled && (
+    hasExternalLogin && (
       <>
         {startupConfig.emailLoginEnabled && (
           <>
             <div className="relative mt-6 flex w-full items-center justify-center border border-t border-gray-300 uppercase dark:border-gray-600">
               <div className="absolute bg-white px-3 text-xs text-black dark:bg-gray-900 dark:text-white">
-                Or
+                {localize('com_auth_or')}
               </div>
             </div>
             <div className="mt-8" />
           </>
         )}
         <div className="mt-2">
-          {startupConfig.socialLogins?.map((provider) => providerComponents[provider] || null)}
+          {startupConfig.loginManagerLoginEnabled && (
+            <SocialButton
+              id="login-manager"
+              enabled={startupConfig.loginManagerLoginEnabled}
+              href="/api/auth/login-manager/start"
+              label={startupConfig.loginManagerLabel || localize('com_auth_login_manager')}
+            />
+          )}
+          {startupConfig.socialLoginEnabled &&
+            startupConfig.socialLogins?.map((provider) => providerComponents[provider] || null)}
         </div>
       </>
     )

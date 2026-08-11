@@ -77,6 +77,19 @@ const userSchema: Schema<IUser> = new Schema<IUser>(
     openidIssuer: {
       type: String,
     },
+    loginManagerId: {
+      type: String,
+    },
+    loginManagerIssuer: {
+      type: String,
+    },
+    loginManagerCompanyId: {
+      type: String,
+    },
+    loginManagerGroups: {
+      type: [String],
+      default: undefined,
+    },
     samlId: {
       type: String,
     },
@@ -173,6 +186,16 @@ const userSchema: Schema<IUser> = new Schema<IUser>(
 userSchema.index({ email: 1, tenantId: 1 }, { unique: true });
 userSchema.index({ role: 1, tenantId: 1 });
 userSchema.index({ idOnTheSource: 1, openidIssuer: 1, tenantId: 1 });
+userSchema.index(
+  { loginManagerId: 1, loginManagerIssuer: 1, tenantId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      loginManagerId: { $exists: true },
+      loginManagerIssuer: { $exists: true },
+    },
+  },
+);
 
 const oAuthIdFields = [
   'googleId',

@@ -2,6 +2,7 @@ import React from 'react';
 import { RefreshCw, Trash2 } from 'lucide-react';
 import { Button, Spinner } from '@librechat/client';
 import { useLocalize, useMCPServerManager, useMCPConnectionStatus } from '~/hooks';
+import { openExternalUrl } from '~/utils';
 
 interface ServerInitializationSectionProps {
   sidePanel?: boolean;
@@ -81,7 +82,7 @@ export default function ServerInitializationSection({
           </Button>
           <Button
             variant="submit"
-            onClick={() => window.open(serverOAuthUrl, '_blank', 'noopener,noreferrer')}
+            onClick={() => openExternalUrl(serverOAuthUrl)}
             className="flex-1"
           >
             {localize('com_ui_continue_oauth')}

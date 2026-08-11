@@ -22,6 +22,8 @@ const mockStartupConfig = {
     githubLoginEnabled: true,
     googleLoginEnabled: true,
     openidLoginEnabled: true,
+    loginManagerLoginEnabled: true,
+    loginManagerLabel: 'Continue with RSAWEB',
     openidLabel: 'Test OpenID',
     openidImageUrl: 'http://test-server.com',
     samlLoginEnabled: true,
@@ -146,6 +148,10 @@ test('renders login form', () => {
   expect(getByRole('link', { name: /Continue with Discord/i })).toHaveAttribute(
     'href',
     'mock-server/oauth/discord',
+  );
+  expect(getByRole('link', { name: /Continue with RSAWEB/i })).toHaveAttribute(
+    'href',
+    '/api/auth/login-manager/start',
   );
   expect(getByRole('link', { name: /Test SAML/i })).toBeInTheDocument();
   expect(getByRole('link', { name: /Test SAML/i })).toHaveAttribute(

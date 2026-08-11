@@ -44,6 +44,7 @@ export * from './approval';
 export * from './steer';
 export * from './activityLabels';
 export * from './numbers';
+export * from './openExternalUrl';
 export { default as cn } from './cn';
 export { default as logger } from './logger';
 export { default as getLoginError } from './getLoginError';

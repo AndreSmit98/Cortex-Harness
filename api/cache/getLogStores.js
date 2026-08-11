@@ -43,6 +43,7 @@ const namespaces = {
 
   [CacheKeys.OPENID_SESSION]: sessionCache(CacheKeys.OPENID_SESSION),
   [CacheKeys.SAML_SESSION]: sessionCache(CacheKeys.SAML_SESSION),
+  [CacheKeys.LOGIN_MANAGER_SESSION]: standardCache(CacheKeys.LOGIN_MANAGER_SESSION),
 
   [CacheKeys.ROLES]: standardCache(CacheKeys.ROLES),
   [CacheKeys.USER_PRINCIPALS]: userPrincipalsCache() ?? disabledCache,

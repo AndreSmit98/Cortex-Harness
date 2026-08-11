@@ -3,6 +3,7 @@ const { isEnabled, clearCloudFrontCookies } = require('@librechat/api');
 const { logger } = require('@librechat/data-schemas');
 const { logoutUser } = require('~/server/services/AuthService');
 const { getOpenIdConfig } = require('~/strategies');
+const loginManagerController = require('./LoginManagerController');
 
 /** Parses and validates OPENID_MAX_LOGOUT_URL_LENGTH, returning defaultValue on invalid input */
 function parseMaxLogoutUrlLength(defaultValue = 2000) {
@@ -36,6 +37,9 @@ const logoutController = async (req, res) => {
   idToken = idToken || parsedCookies.openid_id_token;
 
   try {
+    if (parsedCookies.token_provider === 'login-manager' || parsedCookies.login_manager_session) {
+      await loginManagerController.logout(req, res);
+    }
     const logout = await logoutUser(req, refreshToken);
     const { status, message } = logout;
 

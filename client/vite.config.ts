@@ -53,7 +53,7 @@ export default defineConfig(({ command }) => ({
       (process.env.VITE_ALLOWED_HOSTS && process.env.VITE_ALLOWED_HOSTS.split(',')) || [],
     host: process.env.HOST || 'localhost',
     port: (process.env.PORT && Number(process.env.PORT)) || 3090,
-    strictPort: false,
+    strictPort: process.env.LOGIN_MANAGER_STRICT_PORT === 'true',
     proxy: {
       '/api': {
         target: backendURL,

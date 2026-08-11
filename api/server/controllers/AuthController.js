@@ -26,6 +26,7 @@ const {
 } = require('~/models');
 const { getGraphApiToken } = require('~/server/services/GraphTokenService');
 const { getOpenIdConfig, getOpenIdEmail } = require('~/strategies');
+const loginManagerController = require('~/server/controllers/auth/LoginManagerController');
 
 const AUTH_REFRESH_USER_PROJECTION = '-password -__v -totpSecret -backupCodes -federatedTokens';
 const OPENID_REUSE_EXPIRY_BUFFER_SECONDS = 30;
@@ -155,6 +156,10 @@ const resetPasswordController = async (req, res) => {
 const refreshController = async (req, res) => {
   const parsedCookies = req.headers.cookie ? cookies.parse(req.headers.cookie) : {};
   const token_provider = parsedCookies.token_provider;
+
+  if (token_provider === 'login-manager') {
+    return await loginManagerController.refresh(req, res);
+  }
 
   if (token_provider === 'openid' && isEnabled(process.env.OPENID_REUSE_TOKENS)) {
     /** For OpenID users, read refresh token from session to avoid large cookie issues */

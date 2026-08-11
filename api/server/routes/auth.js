@@ -17,6 +17,7 @@ const {
 const { verify2FAWithTempToken } = require('~/server/controllers/auth/TwoFactorAuthController');
 const { logoutController } = require('~/server/controllers/auth/LogoutController');
 const { loginController } = require('~/server/controllers/auth/LoginController');
+const loginManagerController = require('~/server/controllers/auth/LoginManagerController');
 const { findBalanceByUser, upsertBalanceFields } = require('~/models');
 const { getAppConfig } = require('~/server/services/Config');
 const middleware = require('~/server/middleware');
@@ -38,6 +39,9 @@ const getCloudFrontAuthCookieRefreshResult = (req, res) => {
 };
 
 const ldapAuth = !!process.env.LDAP_URL && !!process.env.LDAP_USER_SEARCH_BASE;
+router.get('/login-manager/start', loginManagerController.start);
+router.get('/login-manager/callback', loginManagerController.callback);
+router.post('/login-manager/callback', loginManagerController.callback);
 //Local
 router.post('/logout', middleware.requireJwtAuth, logoutController);
 router.post(

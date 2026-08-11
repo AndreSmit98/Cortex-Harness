@@ -385,6 +385,25 @@ describe('requireJwtAuth tenant context chaining', () => {
     expect(logger.warn).not.toHaveBeenCalled();
   });
 
+  it('authenticates Login Manager sessions with the normal Cortex JWT strategy', () => {
+    isEnabled.mockReturnValue(true);
+    mockRegisteredStrategies.add('openidJwt');
+    const req = mockReq(undefined, {
+      headers: { cookie: 'token_provider=login-manager; login_manager_session=opaque' },
+      _mockStrategies: {
+        jwt: { user: { id: 'login-manager-user', tenantId: 'tenant-1', role: 'USER' } },
+      },
+    });
+    const res = mockRes();
+    const next = jest.fn();
+
+    requireJwtAuth(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(req.authStrategy).toBe('jwt');
+    expect(res.status).not.toHaveBeenCalled();
+  });
+
   it('logs OpenID JWT expiry when JWT fallback succeeds', () => {
     isEnabled.mockReturnValue(true);
     mockRegisteredStrategies.add('openidJwt');
