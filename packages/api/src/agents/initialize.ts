@@ -426,6 +426,8 @@ export interface InitializeAgentParams {
     toolDefinitions?: LCTool[];
     hasDeferredTools?: boolean;
     actionsEnabled?: boolean;
+    /** True when configured MCP tools were skipped because none were available. */
+    mcpToolsUnavailable?: boolean;
     /**
      * Pre-uploaded code-env file refs for the agent's
      * `tool_resources.execute_code`. Bubbled up so the run host can seed
@@ -1054,6 +1056,7 @@ export async function initializeAgent(
     requestScopedConnections,
     hasDeferredTools,
     actionsEnabled,
+    mcpToolsUnavailable,
     tools: structuredTools,
     primedCodeFiles,
   } = loadToolsResult ?? {
@@ -1069,6 +1072,13 @@ export async function initializeAgent(
     actionsEnabled: undefined,
     primedCodeFiles: undefined,
   };
+
+  if (mcpToolsUnavailable === true) {
+    appendAdditionalInstructions(
+      agent,
+      'Some MCP tools configured for this agent are temporarily unavailable. Continue normally for requests that do not require those tools. If a request requires an unavailable MCP tool, explain that its MCP connection or authentication must be restored; do not invent a tool result.',
+    );
+  }
 
   let toolDefinitions = loadedToolDefinitions;
 

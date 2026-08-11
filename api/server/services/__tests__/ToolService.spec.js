@@ -359,7 +359,7 @@ describe('ToolService - Action Capability Gating', () => {
       expect(callArgs.tools).toContain(regularTool);
     });
 
-    it('fails initialization when an explicitly selected MCP tool cannot be resolved', async () => {
+    it('continues without MCP when an explicitly selected MCP tool cannot be resolved', async () => {
       const mcpTool = `search${Constants.mcp_delimiter}warehouse`;
       const capabilities = [AgentCapabilities.tools];
       const req = createMockReq(capabilities);
@@ -384,14 +384,54 @@ describe('ToolService - Action Capability Gating', () => {
           agent: { id: 'agent_123', name: 'Target Agent', tools: [mcpTool] },
           definitionsOnly: true,
         }),
-      ).rejects.toMatchObject({
-        code: 'AGENT_EXPECTED_MCP_TOOLS_UNAVAILABLE',
-        statusCode: 503,
-        message: expect.stringContaining('can access its selected tools'),
+      ).resolves.toMatchObject({
+        toolDefinitions: [],
+        mcpToolsUnavailable: true,
       });
+      expect(mockLoadToolDefinitions).toHaveBeenCalledTimes(1);
     });
 
-    it('fails closed when MCP definition loading throws before resolution completes', async () => {
+    it('preserves non-MCP tools while falling back from an unavailable MCP server', async () => {
+      const mcpTool = `search${Constants.mcp_delimiter}warehouse`;
+      const capabilities = [AgentCapabilities.tools];
+      const req = createMockReq(capabilities);
+      mockGetEndpointsConfig.mockResolvedValue(createEndpointsConfig(capabilities));
+      mockResolveConfigServers.mockResolvedValue({
+        warehouse: {
+          type: 'streamable-http',
+          url: 'https://mcp.example.com/warehouse',
+        },
+      });
+      mockLoadToolDefinitions
+        .mockResolvedValueOnce({
+          toolDefinitions: [],
+          toolRegistry: new Map(),
+          hasDeferredTools: false,
+          mcpResolution: { expectedToolCount: 1, resolvedToolCount: 0 },
+        })
+        .mockResolvedValueOnce({
+          toolDefinitions: [{ name: regularTool }],
+          toolRegistry: new Map(),
+          hasDeferredTools: false,
+          mcpResolution: { expectedToolCount: 0, resolvedToolCount: 0 },
+        });
+
+      const result = await loadAgentTools({
+        req,
+        res: {},
+        agent: { id: 'agent_123', tools: [regularTool, mcpTool] },
+        definitionsOnly: true,
+      });
+
+      expect(result).toMatchObject({
+        toolDefinitions: [{ name: regularTool }],
+        mcpToolsUnavailable: true,
+      });
+      expect(mockLoadToolDefinitions).toHaveBeenCalledTimes(2);
+      expect(mockLoadToolDefinitions.mock.calls[1][0].tools).toEqual([regularTool]);
+    });
+
+    it('continues without MCP when definition loading throws before resolution completes', async () => {
       const capabilities = [AgentCapabilities.tools];
       const req = createMockReq(capabilities);
       mockGetEndpointsConfig.mockResolvedValue(createEndpointsConfig(capabilities));
@@ -408,11 +448,11 @@ describe('ToolService - Action Capability Gating', () => {
           },
           definitionsOnly: true,
         }),
-      ).rejects.toMatchObject({
-        code: 'AGENT_EXPECTED_MCP_TOOLS_UNAVAILABLE',
-        statusCode: 503,
-        cause: expect.objectContaining({ message: 'MCP registry unavailable' }),
+      ).resolves.toMatchObject({
+        toolDefinitions: [],
+        mcpToolsUnavailable: true,
       });
+      expect(mockLoadToolDefinitions).toHaveBeenCalledTimes(1);
     });
 
     it('allows a server pin with no explicitly selected MCP tools', async () => {
@@ -488,7 +528,7 @@ describe('ToolService - Action Capability Gating', () => {
       expect(callArgs.tools).not.toContain(mcpTool);
     });
 
-    it('fails explicitly when MCP permission filtering removes every expected tool', async () => {
+    it('continues without MCP when permission filtering removes every expected tool', async () => {
       const { userCanUseMCPServers } = require('~/server/services/MCP');
       userCanUseMCPServers.mockResolvedValueOnce(false);
 
@@ -506,9 +546,9 @@ describe('ToolService - Action Capability Gating', () => {
           },
           definitionsOnly: true,
         }),
-      ).rejects.toMatchObject({
-        code: 'AGENT_EXPECTED_MCP_TOOLS_UNAVAILABLE',
-        statusCode: 503,
+      ).resolves.toMatchObject({
+        toolDefinitions: [],
+        mcpToolsUnavailable: true,
       });
       expect(mockLoadToolDefinitions).not.toHaveBeenCalled();
     });

@@ -514,6 +514,7 @@ async function processRequiredActions(client, requiredActions) {
  *   userMCPAuthMap?: Record<string, Record<string, string>>;
  *   toolRegistry?: Map<string, import('~/utils/toolClassification').LCTool>;
  *   hasDeferredTools?: boolean;
+ *   mcpToolsUnavailable?: boolean;
  * }>} The agent tools and registry.
  */
 /** Native LibreChat tools that are not in the manifest */
@@ -1269,10 +1270,40 @@ async function loadAgentTools({
         accessibleMcpServerNames,
       });
     } catch (error) {
-      if (isExpectedMCPToolsUnavailableError(error) || !agent.tools?.some(isExpectedMCPTool)) {
+      const expectedMCPTools = agent.tools?.filter(isExpectedMCPTool) ?? [];
+      if (expectedMCPTools.length === 0) {
         throw error;
       }
-      throw createExpectedMCPToolsUnavailableError(agent.name, error);
+
+      /**
+       * MCP availability is optional at request time. A disconnected server,
+       * an expired OAuth session, or a temporarily empty tool catalog must not
+       * prevent the model from answering a prompt that does not need MCP.
+       * Retry with every MCP reference removed so the agent keeps its native
+       * tools and can continue the turn. The initializer uses the marker below
+       * to tell the model not to fabricate MCP results when a request actually
+       * depends on one of the unavailable tools.
+       */
+      const fallbackAgent = {
+        ...agent,
+        tools: agent.tools.filter((tool) => !tool?.includes(Constants.mcp_delimiter)),
+      };
+      const mcpError = isExpectedMCPToolsUnavailableError(error)
+        ? error
+        : createExpectedMCPToolsUnavailableError(agent.name, error);
+      logger.warn(`[ToolService] ${mcpError.message} Continuing this turn without MCP tools.`);
+
+      const fallbackResult = await loadToolDefinitionsWrapper({
+        req,
+        res,
+        agent: fallbackAgent,
+        agentResourceType,
+        streamId,
+        jobCreatedAt,
+        tool_resources,
+        accessibleMcpServerNames,
+      });
+      return { ...fallbackResult, mcpToolsUnavailable: true };
     }
   }
 
