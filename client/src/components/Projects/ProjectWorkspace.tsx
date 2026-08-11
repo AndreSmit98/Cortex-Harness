@@ -1,17 +1,29 @@
-import { useCallback, useId, useMemo, useState } from 'react';
+import { useCallback, useId, useMemo, useState, type FormEvent } from 'react';
 import * as Ariakit from '@ariakit/react';
 import { useRecoilValue } from 'recoil';
 import { useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, ArrowUpDown, Check, Folder, Plus } from 'lucide-react';
+import { ArrowLeft, ArrowUpDown, Check, Folder, Pencil, Plus } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { QueryKeys } from 'librechat-data-provider';
 import type { ConversationListResponse } from 'librechat-data-provider';
-import { Spinner, DropdownPopup } from '@librechat/client';
+import {
+  Button,
+  DropdownPopup,
+  OGDialog,
+  OGDialogTemplate,
+  Spinner,
+  useToastContext,
+} from '@librechat/client';
 import type { MenuItemProps, RenderProp } from '~/common';
-import { useConversationsInfiniteQuery, useProjectQuery } from '~/data-provider';
+import {
+  useConversationsInfiniteQuery,
+  useProjectQuery,
+  useUpdateProjectMutation,
+} from '~/data-provider';
 import { useLocalize, useNewConvo } from '~/hooks';
 import { cn, clearMessagesCache } from '~/utils';
 import ProjectChatList from './ProjectChatList';
+import WorkspacePathInput from './WorkspacePathInput';
 import store from '~/store';
 
 type ChatSortField = 'updatedAt' | 'createdAt';
@@ -38,8 +50,13 @@ export default function ProjectWorkspace() {
   const { projectId = '' } = useParams();
   const [sortBy, setSortBy] = useState<ChatSortField>('updatedAt');
   const sortMenuId = useId();
+  const workspaceFormId = useId();
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [isWorkspaceDialogOpen, setIsWorkspaceDialogOpen] = useState(false);
+  const [workspacePath, setWorkspacePath] = useState('');
   const { data: project, isLoading: isProjectLoading } = useProjectQuery(projectId);
+  const updateProject = useUpdateProjectMutation();
+  const { showToast } = useToastContext();
   const conversation = useRecoilValue(store.conversationByIndex(0));
   const { newConversation } = useNewConvo();
   const activeProjectId = project?._id;
@@ -109,6 +126,33 @@ export default function ProjectWorkspace() {
     newConversation({ template: { chatProjectId: activeProjectId } });
   }, [activeProjectId, conversation?.conversationId, newConversation, queryClient]);
 
+  const openWorkspaceDialog = useCallback(() => {
+    setWorkspacePath(project?.workspacePath ?? '');
+    setIsWorkspaceDialogOpen(true);
+  }, [project?.workspacePath]);
+
+  const saveWorkspace = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      if (!activeProjectId || updateProject.isLoading) {
+        return;
+      }
+      try {
+        await updateProject.mutateAsync({
+          projectId: activeProjectId,
+          workspacePath: workspacePath.trim() || null,
+        });
+        setIsWorkspaceDialogOpen(false);
+      } catch {
+        showToast({
+          message: localize('com_ui_project_workspace_error'),
+          status: 'error',
+        });
+      }
+    },
+    [activeProjectId, localize, showToast, updateProject, workspacePath],
+  );
+
   if (isProjectLoading) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -151,7 +195,25 @@ export default function ProjectWorkspace() {
               </p>
             ) : null}
           </div>
+          <button
+            type="button"
+            onClick={openWorkspaceDialog}
+            className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-hover hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring-primary"
+            aria-label={localize('com_ui_project_workspace')}
+          >
+            <Pencil className="h-4 w-4" aria-hidden="true" />
+            {localize('com_ui_project_workspace')}
+          </button>
         </header>
+
+        {project.workspacePath ? (
+          <p
+            className="mt-3 truncate font-mono text-xs text-text-secondary"
+            title={project.workspacePath}
+          >
+            {project.workspacePath}
+          </p>
+        ) : null}
 
         <button
           type="button"
@@ -210,6 +272,34 @@ export default function ProjectWorkspace() {
           />
         </section>
       </div>
+      <OGDialog open={isWorkspaceDialogOpen} onOpenChange={setIsWorkspaceDialogOpen}>
+        <OGDialogTemplate
+          title={localize('com_ui_project_workspace')}
+          showCloseButton={true}
+          className="w-11/12 max-w-lg bg-surface-primary text-text-primary"
+          main={
+            <form id={workspaceFormId} onSubmit={saveWorkspace}>
+              <WorkspacePathInput
+                id={`${workspaceFormId}-path`}
+                value={workspacePath}
+                onChange={setWorkspacePath}
+                disabled={updateProject.isLoading}
+              />
+            </form>
+          }
+          buttons={
+            <Button
+              type="submit"
+              form={workspaceFormId}
+              variant="submit"
+              disabled={updateProject.isLoading}
+              aria-label={localize('com_ui_save')}
+            >
+              {updateProject.isLoading ? <Spinner className="size-4" /> : localize('com_ui_save')}
+            </Button>
+          }
+        />
+      </OGDialog>
     </main>
   );
 }

@@ -11,6 +11,7 @@ export type ChatProjectSortDirection = 'asc' | 'desc';
 export type CreateChatProjectInput = {
   name: string;
   description?: string | null;
+  workspacePath?: string | null;
 };
 
 export type UpdateChatProjectInput = Partial<CreateChatProjectInput>;
@@ -90,6 +91,7 @@ function sanitizeProjectInput(input: CreateChatProjectInput): CreateChatProjectI
   return {
     name: input.name.trim().slice(0, 100),
     description: input.description?.trim().slice(0, 1000) ?? '',
+    workspacePath: input.workspacePath?.trim().slice(0, 4096) ?? null,
   };
 }
 
@@ -338,7 +340,7 @@ export function createChatProjectMethods(mongoose: typeof import('mongoose')): C
     }
 
     const ChatProject = mongoose.models.ChatProject as Model<IChatProjectDocument>;
-    const update: Partial<Pick<IChatProject, 'name' | 'description'>> = {};
+    const update: Partial<Pick<IChatProject, 'name' | 'description' | 'workspacePath'>> = {};
     if (typeof input.name === 'string') {
       const name = input.name.trim().slice(0, 100);
       if (!name) {
@@ -348,6 +350,9 @@ export function createChatProjectMethods(mongoose: typeof import('mongoose')): C
     }
     if (input.description !== undefined) {
       update.description = input.description?.trim().slice(0, 1000) ?? '';
+    }
+    if (input.workspacePath !== undefined) {
+      update.workspacePath = input.workspacePath?.trim().slice(0, 4096) ?? null;
     }
 
     return await ChatProject.findOneAndUpdate(

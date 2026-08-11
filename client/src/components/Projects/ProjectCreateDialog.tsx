@@ -19,6 +19,7 @@ import {
 } from '@librechat/client';
 import { useCreateProjectMutation } from '~/data-provider';
 import { useLocalize } from '~/hooks';
+import WorkspacePathInput from './WorkspacePathInput';
 
 type ProjectCreateDialogProps = {
   open: boolean;
@@ -39,6 +40,7 @@ export default function ProjectCreateDialog({
   const formId = useId();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [name, setName] = useState('');
+  const [workspacePath, setWorkspacePath] = useState('');
   const createProject = useCreateProjectMutation();
   const { showToast } = useToastContext();
 
@@ -54,6 +56,7 @@ export default function ProjectCreateDialog({
     onOpenChange(nextOpen);
     if (!nextOpen && !createProject.isLoading) {
       setName('');
+      setWorkspacePath('');
     }
   };
 
@@ -65,8 +68,12 @@ export default function ProjectCreateDialog({
     }
 
     try {
-      const project = await createProject.mutateAsync({ name: trimmedName });
+      const project = await createProject.mutateAsync({
+        name: trimmedName,
+        workspacePath: workspacePath.trim() || null,
+      });
       setName('');
+      setWorkspacePath('');
       onOpenChange(false);
       onCreated?.(project);
     } catch {
@@ -85,17 +92,25 @@ export default function ProjectCreateDialog({
         showCloseButton={true}
         className="w-11/12 max-w-lg bg-surface-primary text-text-primary"
         main={
-          <form id={formId} onSubmit={handleCreate} className="space-y-2">
-            <Label htmlFor={`${formId}-name`} className="text-sm font-medium text-text-primary">
-              {localize('com_ui_project_name')}
-            </Label>
-            <Input
-              id={`${formId}-name`}
-              ref={inputRef}
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder={localize('com_ui_project_name_placeholder')}
-              className="w-full bg-transparent text-text-primary placeholder:text-text-secondary focus-visible:ring-2 focus-visible:ring-ring-primary"
+          <form id={formId} onSubmit={handleCreate} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor={`${formId}-name`} className="text-sm font-medium text-text-primary">
+                {localize('com_ui_project_name')}
+              </Label>
+              <Input
+                id={`${formId}-name`}
+                ref={inputRef}
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder={localize('com_ui_project_name_placeholder')}
+                className="w-full bg-transparent text-text-primary placeholder:text-text-secondary focus-visible:ring-2 focus-visible:ring-ring-primary"
+              />
+            </div>
+            <WorkspacePathInput
+              id={`${formId}-workspace`}
+              value={workspacePath}
+              onChange={setWorkspacePath}
+              disabled={createProject.isLoading}
             />
           </form>
         }

@@ -286,6 +286,10 @@ export type TUser = {
   role: string;
   provider: string;
   tenantId?: string;
+  loginManagerId?: string;
+  loginManagerIssuer?: string;
+  loginManagerCompanyId?: string;
+  loginManagerGroups?: string[];
   plugins?: string[];
   twoFactorEnabled?: boolean;
   backupCodes?: TBackupCode[];
@@ -361,6 +365,8 @@ export type TChatProject = {
   _id: string;
   name: string;
   description?: string;
+  /** Absolute local folder used as this project's agent workspace. */
+  workspacePath?: string | null;
   user?: string;
   conversationCount: number;
   lastConversationAt?: string | null;
@@ -372,6 +378,8 @@ export type TChatProject = {
 export type TCreateChatProjectRequest = {
   name: string;
   description?: string;
+  /** An absolute folder path on the host running Cortex. */
+  workspacePath?: string | null;
 };
 
 export type TUpdateChatProjectRequest = Partial<TCreateChatProjectRequest> & {

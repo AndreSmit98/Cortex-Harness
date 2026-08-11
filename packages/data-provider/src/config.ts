@@ -1568,6 +1568,8 @@ export type TStartupConfig = {
   githubLoginEnabled: boolean;
   googleLoginEnabled: boolean;
   openidLoginEnabled: boolean;
+  loginManagerLoginEnabled?: boolean;
+  loginManagerLabel?: string;
   appleLoginEnabled: boolean;
   samlLoginEnabled: boolean;
   openidLabel: string;
@@ -2495,6 +2497,10 @@ export enum CacheKeys {
    * Key for OpenID session.
    */
   OPENID_SESSION = 'OPENID_SESSION',
+  /**
+   * Key for encrypted Login Manager attempts and refresh sessions.
+   */
+  LOGIN_MANAGER_SESSION = 'LOGIN_MANAGER_SESSION',
   /**
    * Key for SAML session.
    */

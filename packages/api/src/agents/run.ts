@@ -1085,6 +1085,7 @@ export async function createRun({
   subagentUsageSink,
   steering,
   activityLabel,
+  projectWorkspacePath,
   hitlCapable = false,
   toolInputValidationErrors,
   streaming = true,
@@ -1163,6 +1164,8 @@ export async function createRun({
    * the hook returns immediately and generates off the critical path.
    */
   activityLabel?: { hook: HookCallback<'PostToolBatch'> };
+  /** Canonical host folder selected by the owner of the active Chat Project. */
+  projectWorkspacePath?: string;
   /**
    * Whether the caller implements the HITL pause/resume lifecycle (inspects
    * `run.getInterrupt()`, persists a pending action, exposes a resume route). Gates the
@@ -1541,6 +1544,25 @@ export async function createRun({
   }
 
   const streamLimits = resolveStreamLimits(agentsEndpointConfig);
+  let toolExecution: RunConfig['toolExecution'] | undefined = projectWorkspacePath
+    ? {
+        engine: 'local' as const,
+        local: {
+          workspace: {
+            root: projectWorkspacePath,
+            allowReadOutside: false,
+            allowWriteOutside: false,
+          },
+          fileCheckpointing: true,
+          postEditSyntaxCheck: 'auto' as const,
+          bashAst: 'auto' as const,
+        },
+      }
+    : undefined;
+
+  if (!toolExecution && statefulCodeSessions) {
+    toolExecution = { sandbox: { statefulSessions: true } };
+  }
 
   /**
    * Built as a variable (not an inline literal) so the extra
@@ -1629,9 +1651,7 @@ export async function createRun({
     // `engine` is omitted (defaults to `sandbox`) and the hint defaults to
     // thread_id. Requires @librechat/agents with `toolExecution.sandbox`;
     // older versions ignore the field.
-    ...(statefulCodeSessions && {
-      toolExecution: { sandbox: { statefulSessions: true } },
-    }),
+    ...(toolExecution && { toolExecution }),
     // HITL opt-in: the `humanInTheLoop` switch + the PreToolUse policy hook. Spread
     // here (not just `compileOptions.checkpointer` above) so an `ask` decision raises
     // a real interrupt — without these the run would never pause. Absent when disabled.

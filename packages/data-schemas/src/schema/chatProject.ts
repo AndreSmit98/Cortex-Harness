@@ -16,6 +16,12 @@ const chatProjectSchema: Schema<IChatProjectDocument> = new Schema<IChatProjectD
       trim: true,
       maxlength: 1000,
     },
+    workspacePath: {
+      type: String,
+      default: null,
+      trim: true,
+      maxlength: 4096,
+    },
     user: {
       type: String,
       required: true,

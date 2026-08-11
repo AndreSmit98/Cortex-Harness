@@ -110,4 +110,32 @@ describe('createRun code-tool eager/session wiring', () => {
       expect.arrayContaining(['create_file', 'edit_file', 'read_file']),
     );
   });
+
+  it('uses the active Project folder as a bounded local workspace', async () => {
+    await createRun({
+      agents: [makeAgent({ statefulCodeSessions: true })] as never,
+      signal: new AbortController().signal,
+      projectWorkspacePath: '/Users/example/Projects/cortex-test',
+    });
+
+    const createMock = Run.create as jest.Mock;
+    const runConfig = createMock.mock.calls[0][0] as {
+      toolExecution?: {
+        engine?: string;
+        local?: {
+          workspace?: { root?: string; allowReadOutside?: boolean; allowWriteOutside?: boolean };
+        };
+      };
+    };
+    expect(runConfig.toolExecution).toEqual({
+      engine: 'local',
+      local: expect.objectContaining({
+        workspace: {
+          root: '/Users/example/Projects/cortex-test',
+          allowReadOutside: false,
+          allowWriteOutside: false,
+        },
+      }),
+    });
+  });
 });

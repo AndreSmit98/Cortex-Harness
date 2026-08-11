@@ -124,6 +124,7 @@ const { getMCPServerTools } = require('~/server/services/Config');
 const BaseClient = require('~/app/clients/BaseClient');
 const { getMCPManager } = require('~/config');
 const db = require('~/models');
+const { getProjectWorkspacePath } = require('~/server/services/Projects/workspace');
 
 const loadAgent = (params) => loadAgentFn(params, { getAgent: db.getAgent, getMCPServerTools });
 
@@ -956,6 +957,22 @@ class AgentClient extends BaseClient {
    * @param {MongoFile[]} attachments
    */
   checkVisionRequest() {}
+
+  async getProjectWorkspacePath() {
+    try {
+      return await getProjectWorkspacePath(
+        this.options.req?.user?.id,
+        this.options.chatProjectId,
+        db.getChatProject,
+      );
+    } catch (error) {
+      logger.warn(
+        '[AgentClient] Unable to resolve project workspace; using the standard sandbox',
+        error?.message ?? error,
+      );
+      return undefined;
+    }
+  }
 
   getSaveOptions() {
     let runOptions = {};
@@ -2518,6 +2535,7 @@ class AgentClient extends BaseClient {
           });
         }
 
+        const projectWorkspacePath = await this.getProjectWorkspacePath();
         const createRunPromise = createRun({
           agents,
           messages,
@@ -2543,6 +2561,7 @@ class AgentClient extends BaseClient {
             this.steerOffsetState,
           ),
           requestBody: config.configurable.requestBody,
+          projectWorkspacePath,
           user: createSafeUser(this.options.req?.user),
           tenantId: this.options.req?.user?.tenantId,
           summarizationConfig: appConfig?.summarization,
@@ -2878,6 +2897,7 @@ class AgentClient extends BaseClient {
       const initialSessions = buildInitialToolSessions({ skillSessions, agents });
 
       const streamId = this.options.req?._resumableStreamId;
+      const projectWorkspacePath = await this.getProjectWorkspacePath();
       run = await createRun({
         agents,
         // State (messages, tool calls) is rehydrated from the checkpoint by
@@ -2914,6 +2934,7 @@ class AgentClient extends BaseClient {
           this.steerOffsetState,
         ),
         requestBody: config.configurable.requestBody,
+        projectWorkspacePath,
         user: createSafeUser(this.options.req?.user),
         tenantId: this.options.req?.user?.tenantId,
         summarizationConfig: appConfig?.summarization,

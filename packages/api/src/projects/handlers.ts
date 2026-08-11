@@ -35,6 +35,13 @@ type ProjectHandlerDependencies = Pick<
   | 'assignConversationToProject'
 >;
 
+export class ProjectWorkspaceError extends Error {}
+
+type ProjectWorkspaceDependencies = {
+  isEnabled?: () => boolean;
+  resolvePath?: (workspacePath: string) => Promise<string>;
+};
+
 const getUserId = (req: ProjectRequest): string => req.user?.id ?? req.user?._id?.toString() ?? '';
 
 const queryString = (value: Request['query'][string]): string | undefined => {
@@ -72,6 +79,16 @@ const normalizeSortDirection = (
   return sortDirection === 'asc' || sortDirection === 'desc' ? sortDirection : undefined;
 };
 
+const workspacePathInput = (value: unknown): string | null | undefined => {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (typeof value !== 'string') {
+    throw new ProjectWorkspaceError('workspacePath must be a string or null');
+  }
+  return value.trim() || null;
+};
+
 const createProjectInput = (req: ProjectRequest): CreateChatProjectInput | null => {
   const name = normalizeString(req.body?.name);
   if (!name) {
@@ -81,10 +98,29 @@ const createProjectInput = (req: ProjectRequest): CreateChatProjectInput | null 
   return {
     name,
     description: typeof req.body?.description === 'string' ? req.body.description : '',
+    workspacePath: workspacePathInput(req.body?.workspacePath),
   };
 };
 
-export function createProjectHandlers(deps: ProjectHandlerDependencies): {
+async function resolveWorkspaceInput(
+  input: CreateChatProjectInput | UpdateChatProjectInput,
+  workspace: ProjectWorkspaceDependencies,
+): Promise<CreateChatProjectInput | UpdateChatProjectInput> {
+  if (input.workspacePath === undefined || input.workspacePath === null) {
+    return input;
+  }
+  if (workspace.isEnabled?.() !== true || !workspace.resolvePath) {
+    throw new ProjectWorkspaceError(
+      'Local project workspaces are disabled. Set LOCAL_PROJECT_WORKSPACES=true and restart Cortex.',
+    );
+  }
+  return { ...input, workspacePath: await workspace.resolvePath(input.workspacePath) };
+}
+
+export function createProjectHandlers(
+  deps: ProjectHandlerDependencies,
+  workspace: ProjectWorkspaceDependencies = {},
+): {
   listProjects: (req: ProjectRequest, res: Response) => Promise<Response>;
   createProject: (req: ProjectRequest, res: Response) => Promise<Response>;
   assignConversationToProject: (req: ProjectRequest, res: Response) => Promise<Response>;
@@ -109,15 +145,28 @@ export function createProjectHandlers(deps: ProjectHandlerDependencies): {
   }
 
   async function createProject(req: ProjectRequest, res: Response): Promise<Response> {
-    const input = createProjectInput(req);
+    let input: CreateChatProjectInput | null;
+    try {
+      input = createProjectInput(req);
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ error: error instanceof Error ? error.message : 'Invalid workspacePath' });
+    }
     if (!input) {
       return res.status(400).json({ error: 'name is required' });
     }
 
     try {
-      const project = await deps.createChatProject(getUserId(req), input);
+      const project = await deps.createChatProject(
+        getUserId(req),
+        (await resolveWorkspaceInput(input, workspace)) as CreateChatProjectInput,
+      );
       return res.status(201).json(project);
     } catch (error) {
+      if (error instanceof ProjectWorkspaceError) {
+        return res.status(400).json({ error: error.message });
+      }
       logger.error('[projects] Error creating project', error);
       return res.status(500).json({ error: 'Error creating project' });
     }
@@ -188,14 +237,31 @@ export function createProjectHandlers(deps: ProjectHandlerDependencies): {
     if (req.body?.description !== undefined) {
       input.description = typeof req.body.description === 'string' ? req.body.description : '';
     }
+    try {
+      const workspacePath = workspacePathInput(req.body?.workspacePath);
+      if (workspacePath !== undefined) {
+        input.workspacePath = workspacePath;
+      }
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ error: error instanceof Error ? error.message : 'Invalid workspacePath' });
+    }
 
     try {
-      const project = await deps.updateChatProject(getUserId(req), projectId, input);
+      const project = await deps.updateChatProject(
+        getUserId(req),
+        projectId,
+        (await resolveWorkspaceInput(input, workspace)) as UpdateChatProjectInput,
+      );
       if (!project) {
         return res.status(404).json({ error: PROJECT_NOT_FOUND });
       }
       return res.status(200).json(project);
     } catch (error) {
+      if (error instanceof ProjectWorkspaceError) {
+        return res.status(400).json({ error: error.message });
+      }
       logger.error('[projects] Error updating project', error);
       return res.status(500).json({ error: 'Error updating project' });
     }

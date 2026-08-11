@@ -2,16 +2,26 @@ const express = require('express');
 const { createProjectHandlers } = require('@librechat/api');
 const requireJwtAuth = require('~/server/middleware/requireJwtAuth');
 const db = require('~/models');
+const {
+  isProjectWorkspaceEnabled,
+  resolveProjectWorkspacePath,
+} = require('~/server/services/Projects/workspace');
 
 const router = express.Router();
-const handlers = createProjectHandlers({
-  listChatProjects: db.listChatProjects,
-  createChatProject: db.createChatProject,
-  getChatProject: db.getChatProject,
-  updateChatProject: db.updateChatProject,
-  deleteChatProject: db.deleteChatProject,
-  assignConversationToProject: db.assignConversationToProject,
-});
+const handlers = createProjectHandlers(
+  {
+    listChatProjects: db.listChatProjects,
+    createChatProject: db.createChatProject,
+    getChatProject: db.getChatProject,
+    updateChatProject: db.updateChatProject,
+    deleteChatProject: db.deleteChatProject,
+    assignConversationToProject: db.assignConversationToProject,
+  },
+  {
+    isEnabled: isProjectWorkspaceEnabled,
+    resolvePath: resolveProjectWorkspacePath,
+  },
+);
 
 router.use(requireJwtAuth);
 
