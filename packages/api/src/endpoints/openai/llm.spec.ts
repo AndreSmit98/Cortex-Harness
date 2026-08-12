@@ -685,25 +685,23 @@ describe('getOpenAILLMConfig', () => {
       });
     });
 
-    it('should omit reasoning_mode and reasoning_context on OpenAI Chat Completions', () => {
+    it('should omit Responses-only reasoning fields when GPT-5.6 reasoning is disabled', () => {
       const result = getOpenAILLMConfig({
         apiKey: 'test-api-key',
         streaming: true,
         endpoint: EModelEndpoint.openAI,
         modelOptions: {
           model: 'gpt-5.6',
-          reasoning_effort: ReasoningEffort.high,
+          reasoning_effort: ReasoningEffort.none,
           reasoning_mode: ReasoningMode.pro,
           reasoning_context: ReasoningContext.all_turns,
-          /** Explicit opt-out: GPT-5.6 reasoning otherwise defaults to the Responses API */
           useResponsesApi: false,
         },
       });
 
-      /** Chat Completions uses reasoning_effort; mode/context are Responses-only
-       *  and must never leak as top-level params or a reasoning object. */
+      /** Chat Completions permits GPT-5.6 function tools only when reasoning is disabled. */
       expect(result.llmConfig).not.toHaveProperty('reasoning');
-      expect(result.llmConfig).toHaveProperty('reasoning_effort', ReasoningEffort.high);
+      expect(result.llmConfig).toHaveProperty('reasoning_effort', ReasoningEffort.none);
       expect(result.llmConfig).not.toHaveProperty('reasoning_mode');
       expect(result.llmConfig).not.toHaveProperty('reasoning_context');
     });
@@ -758,7 +756,7 @@ describe('getOpenAILLMConfig', () => {
       expect(result.llmConfig).toHaveProperty('reasoning_effort', ReasoningEffort.none);
     });
 
-    it('should respect an explicit useResponsesApi: false', () => {
+    it('should override a persisted useResponsesApi: false for GPT-5.6 reasoning', () => {
       const result = getOpenAILLMConfig({
         apiKey: 'test-api-key',
         streaming: true,
@@ -770,9 +768,9 @@ describe('getOpenAILLMConfig', () => {
         },
       });
 
-      expect(result.llmConfig).toHaveProperty('useResponsesApi', false);
-      expect(result.llmConfig).toHaveProperty('reasoning_effort', ReasoningEffort.high);
-      expect(result.llmConfig).not.toHaveProperty('reasoning');
+      expect(result.llmConfig).toHaveProperty('useResponsesApi', true);
+      expect(result.llmConfig.reasoning).toEqual({ effort: ReasoningEffort.high });
+      expect(result.llmConfig).not.toHaveProperty('reasoning_effort');
     });
 
     it.each(['gpt-5', 'gpt-5-pro', 'gpt-5.4-nano', 'gpt-5.5-preview', 'gpt-5-chat', 'o3-mini'])(

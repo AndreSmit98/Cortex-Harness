@@ -35,9 +35,13 @@ function MCPSelectContent() {
       const server = manager?.selectableServers?.find(
         (s) => s.serverName === manager?.mcpValues?.[0],
       );
-      return server?.config?.title || manager?.mcpValues?.[0];
+      return localize('com_ui_mcp_on_demand_label', {
+        0: server?.config?.title || manager?.mcpValues?.[0],
+      });
     }
-    return localize('com_ui_x_selected', { 0: selectedCount });
+    return localize('com_ui_mcp_on_demand_label', {
+      0: localize('com_ui_x_selected', { 0: selectedCount }),
+    });
   }, [manager?.selectableServers, manager?.mcpValues, localize]);
 
   if (!manager) {
@@ -66,7 +70,11 @@ function MCPSelectContent() {
     <>
       <Ariakit.MenuProvider store={menuStore}>
         <TooltipAnchor
-          description={placeholderText}
+          description={
+            (manager?.mcpValues?.length ?? 0) > 0
+              ? localize('com_ui_mcp_on_demand_description')
+              : placeholderText
+          }
           disabled={isOpen}
           render={
             <Ariakit.MenuButton

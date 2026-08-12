@@ -766,13 +766,12 @@ export function getOpenAILLMConfig({
   }
 
   /**
-   * Default GPT-5.6 reasoning requests to the Responses API unless explicitly set.
-   * Reads `llmConfig.model` (reflects `addParams` overrides) and skips when
-   * `dropParams` removes `reasoning_effort` later anyway (`'reasoning'` only
-   * drops the nested object, not the flat param) or opts out of the Responses
-   * API entirely. Limited to first-party OpenAI: OpenRouter, custom gateways
-   * (non-canonical base URL), and `reasoningFormat: 'disabled'` (no reasoning
-   * payload is sent) keep their existing Chat Completions path.
+   * GPT-5.6 reasoning must use the Responses API when tools may be attached.
+   * An agent or preset can retain an old `useResponsesApi: false` value, but
+   * tool binding happens later and Chat Completions then fails with a 400.
+   * Preserve the explicit opt-out only when reasoning is removed entirely.
+   * This is limited to first-party OpenAI: OpenRouter and custom gateways keep
+   * their configured protocol because they may not implement `/v1/responses`.
    */
   const responsesApiOptedOut =
     dropParams != null &&
@@ -782,7 +781,6 @@ export function getOpenAILLMConfig({
     endpoint === EModelEndpoint.openAI &&
     isCanonicalOpenAIBaseURL(baseURL) &&
     reasoningFormat !== ReasoningParameterFormat.disabled &&
-    llmConfig.useResponsesApi == null &&
     !responsesApiOptedOut &&
     requiresResponsesApiForReasoning({ model: llmConfig.model, reasoningEffort })
   ) {

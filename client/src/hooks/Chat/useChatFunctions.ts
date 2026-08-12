@@ -32,6 +32,7 @@ import {
   hasStreamStartFailed,
   createDualMessageContent,
   getRouteChatProjectId,
+  resolveOnDemandMCP,
 } from '~/utils';
 import useFocusRegeneratedResponse from '~/hooks/Chat/useFocusRegeneratedResponse';
 import useSetFilesToDelete from '~/hooks/Files/useSetFilesToDelete';
@@ -355,7 +356,10 @@ export default function useChatFunctions({
 
     setShowStopButton(false);
 
-    const ephemeralAgent = getEphemeralAgent(conversationId ?? Constants.NEW_CONVO);
+    const ephemeralAgent = resolveOnDemandMCP({
+      message: text,
+      ephemeralAgent: getEphemeralAgent(conversationId ?? Constants.NEW_CONVO),
+    });
     /**
      * Manual skill selection resolution:
      *  - Explicit `overrideManualSkills` wins (regenerate / save-and-submit
